@@ -30,6 +30,6 @@ jobs:
           python-version: 3.8
       - name: Check Previous Run
         run: |
-          echo 'Event path: '
-          echo ${{ github.event_path }}
+          echo 'Full event: '
+          cat ${{ github.event_path }}
           python misc.py --pr ${{ github.event.pull_request.number }}
