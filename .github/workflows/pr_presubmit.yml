@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ contains(github.event.pull_request.title, 'fail') }}
     steps:
-      - name: Fail Intentionally
+      - name: Fail Intentionally  # Oops
         run: |
           false
 
