@@ -30,10 +30,17 @@ jobs:
           python-version: 3.8
       - name: Check Previous Run
         run: |
-          echo 'Head Ref: '
+          echo 'github.head_ref: '
           echo ${{ github.head_ref }}
-          echo 'GITHUB_REF: '
-          echo ${{ github.env.head_ref }}
+          echo 'github.ref: '
+          echo ${{ github.ref }}
+          echo 'Triggering SHA: '
+          echo ${{ github.sha }}
+          echo '------------------------------------'
           echo 'Full event: '
           cat ${{ github.event_path }}
+          echo '------------------------------------'
+          echo 'Full action: '
+          cat ${{ github.action_path }}
+          echo '------------------------------------'
           python misc.py --pr ${{ github.event.pull_request.number }}
