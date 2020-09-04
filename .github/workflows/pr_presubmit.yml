@@ -1,0 +1,37 @@
+name: PR Presubmit
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  run_fail:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.pull_request.title, 'fail') }}
+    steps:
+      - name: Fail Intentionally  # Oops
+        run: |
+          false
+
+  run_ok:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.pull_request.title, 'ok') }}
+    steps:
+      - name: Run OK
+        run: |
+          echo 'ok'
+
+  check_gh_action:
+    runs-on: ubuntu-latest
+    # if: ${{ contains(github.event.pull_request.labels.*.name, 'skip ci') }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Check Previous Run
+        run: |
+          echo 'Head Ref: '
+          echo ${{ github.head_ref }}
+          echo 'Full event: '
+          cat ${{ github.event_path }}
+          python misc.py --pr ${{ github.event.pull_request.number }}
