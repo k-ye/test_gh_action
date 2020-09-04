@@ -32,6 +32,8 @@ jobs:
         run: |
           echo 'Head Ref: '
           echo ${{ github.head_ref }}
+          echo 'GITHUB_REF: '
+          echo ${{ github.env.head_ref }}
           echo 'Full event: '
           cat ${{ github.event_path }}
           python misc.py --pr ${{ github.event.pull_request.number }}
