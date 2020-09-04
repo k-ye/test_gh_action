@@ -35,11 +35,4 @@ jobs:
           echo "$GITHUB_CONTEXT"
       - name: Check Previous Run
         run: |
-          echo 'github.head_ref: '
-          echo ${{ github.head_ref }}
-          echo 'github.ref: '
-          echo ${{ github.ref }}
-          echo 'commit SHA: '
-          echo ${{ github.event.pull_request.head.sha }}
-          echo '------------------------------------'
-          python misc.py --pr ${{ github.event.pull_request.number }}
+          python misc.py --pr ${{ github.event.pull_request.number }} --sha ${{ github.event.pull_request.head.sha }}
