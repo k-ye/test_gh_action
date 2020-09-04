@@ -39,10 +39,12 @@ def main():
   pr = args.pr
   commits = get_commits(pr)
   logging.info(f'\nPR={pr} #commits={len(commits)}')
-  # print(json.dumps(commits, indent=2, sort_keys=True))
+  print(prettify_json(commits))
+  print('-----------------------------------')
 
   runs = get_workflow_runs(0)
   print(prettify_json(runs))
+  print('-----------------------------------')
 
 if __name__ == '__main__':
   main()

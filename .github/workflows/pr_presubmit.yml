@@ -39,8 +39,7 @@ jobs:
           echo ${{ github.head_ref }}
           echo 'github.ref: '
           echo ${{ github.ref }}
-          echo '------------------------------------'
-          echo 'Full event: '
-          cat ${{ github.event_path }}
+          echo 'commit SHA: '
+          echo ${{ github.event.pull_request.head.sha }}
           echo '------------------------------------'
           python misc.py --pr ${{ github.event.pull_request.number }}
