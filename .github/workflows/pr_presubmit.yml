@@ -33,7 +33,6 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           echo '$GITHUB_CONTEXT'
-          ddd7610dbf82f8cccf627bc2bf905c807c9ba01b
       - name: Check Previous Run
         run: |
           echo 'github.head_ref: '
