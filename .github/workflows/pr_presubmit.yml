@@ -35,4 +35,8 @@ jobs:
           echo "$GITHUB_CONTEXT"
       - name: Check Previous Run
         run: |
-          python misc.py --pr ${{ github.event.pull_request.number }} --sha ${{ github.event.pull_request.head.sha }}
+          PR=${{ github.event.pull_request.number }}
+          SHA=${{ github.event.pull_request.head.sha }}
+          echo "PR=${PR} SHA=${SHA}"
+          echo '------------------------------------'
+          python misc.py --pr ${PR} --sha ${SHA}
