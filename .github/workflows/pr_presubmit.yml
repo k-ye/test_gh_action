@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
-          echo '$GITHUB_CONTEXT'
+          echo "$GITHUB_CONTEXT"
       - name: Check Previous Run
         run: |
           echo 'github.head_ref: '
