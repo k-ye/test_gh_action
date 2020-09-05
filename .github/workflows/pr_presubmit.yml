@@ -4,23 +4,58 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  run_fail:
+  prepare_commit_data:
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.pull_request.title, 'fail') }}
     steps:
+      - name: Prepare Commit Data
+        runs: |
+          PR=${{ github.event.pull_request.number }}
+          SHA=${{ github.event.pull_request.head.sha }}
+          python prepare_commit_data.py --pr ${PR} --sha ${SHA} --out echo_commit_data.sh
+      - name: Push Commit Data
+        # https://docs.github.com/en/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts#passing-data-between-jobs-in-a-workflow
+        uses: actions/upload-artifact@v2
+        with:
+          name: echo_commit_data
+          path: echo_commit_data.sh
+
+  run_fail:
+    needs: prepare_commit_data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Commit Data
+        uses: actions/download-artifact@v2
+        with:
+          name: echo_commit_data
+      - name: dump_commit_data
+        id: dump_commit_data
+        run: |
+          bash echo_commit_data.sh
       - name: Fail Intentionally  # Oops
+        # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
+        if: ${{ contains(steps.pull_commit_data.outputs.head_commit_msg, 'fail') }}
         run: |
           false
 
   run_ok:
+    needs: prepare_commit_data
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.pull_request.title, 'ok') }}
     steps:
+      - name: Pull Commit Data
+        id: pull_commit_data
+        uses: actions/download-artifact@v2
+        with:
+          name: echo_commit_data
+      - name: dump_commit_data
+        id: dump_commit_data
+        run: |
+          bash echo_commit_data.sh
       - name: Run OK
         run: |
           echo 'ok'
 
   check_gh_action:
+    needs: prepare_commit_data
     runs-on: ubuntu-latest
     # if: ${{ contains(github.event.pull_request.labels.*.name, 'skip ci') }}
     steps:
@@ -28,15 +63,3 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
-      - name: Check Previous Run
-        run: |
-          PR=${{ github.event.pull_request.number }}
-          SHA=${{ github.event.pull_request.head.sha }}
-          echo "PR=${PR} SHA=${SHA}"
-          echo '------------------------------------'
-          python misc.py --pr ${PR} --sha ${SHA}
