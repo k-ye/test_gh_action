@@ -59,6 +59,27 @@ jobs:
         if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[ok]') }}
         run: |
           echo 'ok'
+  
+  run_long:
+    needs: prepare_commit_data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Pull Commit Data
+        uses: actions/download-artifact@v2
+        with:
+          name: echo_commit_data
+      - name: Echo Commit Data to Step Output
+        id: output_commit_data
+        run: |
+          bash echo_commit_data.sh
+      - name: Run OK
+        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[long]') }}
+        run: |
+          python run_long.py
 
   check_prev_run:
     needs: prepare_commit_data
@@ -80,7 +101,8 @@ jobs:
       #   run: |
       #     cat ${{ github.event_path }}
       - name: Check Previous Run
-        # if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[skip ci]') }}
+        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[skip ci]') }}
         run: |
+          echo "Step Outputs=${{ toJson(steps.output_commit_data.outputs) }}"
           python check_prev_run.py --run ${{ steps.output_commit_data.outputs.prev_run_id }}
       

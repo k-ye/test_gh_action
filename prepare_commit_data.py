@@ -59,8 +59,8 @@ def get_cmd_args():
 
 
 OutputData = namedtuple('OutputData',
-                        ['num_commits', 'head_commit_msg', 'prev_run_id'],
-                        defaults=(0, '', ''))
+                        ['head_commit_msg', 'prev_sha', 'prev_run_id'],
+                        defaults=('', '', ''))
 
 
 def gen_output(args):
@@ -77,11 +77,11 @@ def gen_output(args):
     logging.info(f'SHA: head={head_sha} prev={prev_sha}')
     if prev_sha is None:
         # First commit in the PR
-        return OutputData(num_commits, commit_msg, '')
+        return OutputData(commit_msg, '', '')
 
     run_id = locate_workflow_run_id(prev_sha)
     logging.info(f'Prev commit: SHA={prev_sha} workflow_run_id={run_id}')
-    return OutputData(num_commits, commit_msg, run_id)
+    return OutputData(commit_msg, prev_sha, run_id)
 
 
 def main():
