@@ -55,7 +55,7 @@ jobs:
         id: output_commit_data
         run: |
           bash echo_commit_data.sh
-      - name: Run OK
+      - name: Run OK  # Yay
         if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[ok]') }}
         run: |
           echo 'ok'
