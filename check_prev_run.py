@@ -62,7 +62,9 @@ def get_status_of_run(run_id):
         j = json.loads(f.read())
         # https://developer.github.com/v3/checks/runs/#create-a-check-run
         if j['status'] == 'completed':
-            return j['conclusion'] == 'success'
+            c = j['conclusion']
+            logging.debug(f'run={run_id} conclusion={c}')
+            return c == 'success'
 
         if time.time() - start > MAX_TIMEOUT:
             return False
