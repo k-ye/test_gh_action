@@ -36,7 +36,6 @@ def main():
   args = get_cmd_args()
 
   run_id = args.run_id
-  logging.info(f'workflow_run_id={run_id}')
   if not run_id:
     return 0
   

@@ -33,13 +33,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: echo_commit_data
-      - name: dump_commit_data
-        id: dump_commit_data
+      - name: Echo Commit Data to Step Output
+        id: output_commit_data
         run: |
           bash echo_commit_data.sh
       - name: Fail Intentionally  # Oops
         # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
-        if: ${{ contains(steps.dump_commit_data.outputs.head_commit_msg, '[fail]') }}
+        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[fail]') }}
         run: |
           false
 
@@ -48,20 +48,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull Commit Data
-        id: pull_commit_data
         uses: actions/download-artifact@v2
         with:
           name: echo_commit_data
-      - name: dump_commit_data
-        id: dump_commit_data
+      - name: Echo Commit Data to Step Output
+        id: output_commit_data
         run: |
           bash echo_commit_data.sh
       - name: Run OK
-        if: ${{ contains(steps.dump_commit_data.outputs.head_commit_msg, '[ok]') }}
+        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[ok]') }}
         run: |
           echo 'ok'
 
-  check_gh_action:
+  check_prev_run:
     needs: prepare_commit_data
     runs-on: ubuntu-latest
     steps:
@@ -69,3 +68,19 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
+      - name: Pull Commit Data
+        uses: actions/download-artifact@v2
+        with:
+          name: echo_commit_data
+      - name: Echo Commit Data to Step Output
+        id: output_commit_data
+        run: |
+          bash echo_commit_data.sh
+      # - name: Dump Github Event
+      #   run: |
+      #     cat ${{ github.event_path }}
+      - name: Check Previous Run
+        # if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[skip ci]') }}
+        run: |
+          python check_prev_run.py --run ${{ steps.output_commit_data.outputs.prev_run_id }}
+      
