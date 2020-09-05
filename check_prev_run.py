@@ -10,6 +10,7 @@ import sys
 API_PREFIX = 'https://api.github.com/repos/k-ye/test_gh_action'
 SHA = 'sha'
 
+
 def make_api_url(p):
   return f'{API_PREFIX}/{p}'
 
