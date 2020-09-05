@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prepare Commit Data
-        runs: |
+        run: |
           PR=${{ github.event.pull_request.number }}
           SHA=${{ github.event.pull_request.head.sha }}
           python prepare_commit_data.py --pr ${PR} --sha ${SHA} --out echo_commit_data.sh
