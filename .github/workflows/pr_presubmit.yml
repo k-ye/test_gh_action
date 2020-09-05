@@ -36,7 +36,7 @@ jobs:
       - name: dump_commit_data
         id: dump_commit_data
         run: |
-          source echo_commit_data.sh
+          bash echo_commit_data.sh
       - name: Fail Intentionally  # Oops
         # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
         if: ${{ contains(steps.dump_commit_data.outputs.head_commit_msg, '[fail]') }}
@@ -55,7 +55,7 @@ jobs:
       - name: dump_commit_data
         id: dump_commit_data
         run: |
-          source echo_commit_data.sh
+          bash echo_commit_data.sh
       - name: Run OK
         if: ${{ contains(steps.dump_commit_data.outputs.head_commit_msg, '[ok]') }}
         run: |
@@ -64,7 +64,6 @@ jobs:
   check_gh_action:
     needs: prepare_commit_data
     runs-on: ubuntu-latest
-    # if: ${{ contains(github.event.pull_request.labels.*.name, 'skip ci') }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
