@@ -101,13 +101,11 @@ def main():
         return 0
 
     run_id = locate_workflow_run_id(prev_sha)
-    logging.info(f'Prev commit: SHA={prev_sha} workflow_run_id={run_id}')
-
-    run_id = args.run
     if not run_id:
         logging.warning(f'Could not find the workflow run for SHA={prev_sha}')
         return 0
 
+    logging.info(f'Prev commit: SHA={prev_sha} workflow_run_id={run_id}')
     run_ok = get_status_of_run(run_id)
     logging.info(f'workflow_run_id={run_id} ok={run_ok}')
     return 0 if run_ok else 1

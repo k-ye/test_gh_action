@@ -106,4 +106,3 @@ jobs:
           PR=${{ github.event.pull_request.number }}
           SHA=${{ github.event.pull_request.head.sha }}
           python check_prev_run.py --pr ${PR} --sha ${SHA}
-      
