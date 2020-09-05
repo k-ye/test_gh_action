@@ -3,6 +3,7 @@ from shared import make_api_url, send_request
 import json
 import logging
 import time
+import sys
 
 def get_status_of_run(run_id):
   url = make_api_url(f'actions/runs/{run_id}')
@@ -35,7 +36,7 @@ def main():
 
   args = get_cmd_args()
 
-  run_id = args.run_id
+  run_id = args.run
   if not run_id:
     return 0
   
@@ -44,4 +45,4 @@ def main():
   return 0 if run_ok else 1
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())
