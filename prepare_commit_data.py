@@ -4,12 +4,22 @@
 import argparse
 import json
 import logging
-from collections import namedtuple
 import time
+import urllib.request as ur
+import sys
 
-from shared import make_api_url, send_request
+from collections import namedtuple
 
+
+API_PREFIX = 'https://api.github.com/repos/k-ye/test_gh_action'
 SHA = 'sha'
+
+def make_api_url(p):
+  return f'{API_PREFIX}/{p}'
+
+def send_request(url):
+  logging.debug(f'request={url}')
+  return ur.urlopen(url)
 
 
 def get_commits(pr):
@@ -17,36 +27,10 @@ def get_commits(pr):
     f = send_request(url)
     return json.loads(f.read())
 
-
-def locate_previous_commit_sha(commits, head_sha):
-    assert commits[-1][SHA] == head_sha
-    if len(commits) < 2:
-        return None
-    return commits[-2][SHA]
-
-
 def get_commit_message(commits, sha):
     for c in reversed(commits):
         if c[SHA] == sha:
             return c['commit']['message']
-    return ''
-
-
-def get_workflow_runs(page_id):
-    url = make_api_url(f'actions/runs?page={page_id}')
-    f = send_request(url)
-    return json.loads(f.read())
-
-
-def locate_workflow_run_id(sha):
-    done = False
-    page_id = 0
-    while not done:
-        runs = get_workflow_runs(page_id)['workflow_runs']
-        for r in runs:
-            if r['head_sha'] == sha:
-                return r['id']
-        page_id += 1
     return ''
 
 
@@ -59,8 +43,8 @@ def get_cmd_args():
 
 
 OutputData = namedtuple('OutputData',
-                        ['head_commit_msg', 'prev_sha', 'prev_run_id'],
-                        defaults=('', '', ''))
+                        ['head_commit_msg'],
+                        defaults=(''))
 
 
 def gen_output(args):
@@ -72,16 +56,7 @@ def gen_output(args):
     head_sha = args.sha
     commit_msg = get_commit_message(commits, head_sha)
     logging.info(f'HEAD commit: SHA={head_sha} message={commit_msg}')
-
-    prev_sha = locate_previous_commit_sha(commits, head_sha)
-    logging.info(f'SHA: head={head_sha} prev={prev_sha}')
-    if prev_sha is None:
-        # First commit in the PR
-        return OutputData(commit_msg, '', '')
-
-    run_id = locate_workflow_run_id(prev_sha)
-    logging.info(f'Prev commit: SHA={prev_sha} workflow_run_id={run_id}')
-    return OutputData(commit_msg, prev_sha, run_id)
+    return OutputData(commit_msg)
 
 
 def main():
