@@ -26,8 +26,8 @@ def send_request(url, token=None):
 def print_response(res):
     hdrs = res.getheaders()
     for p in hdrs:
-        print(f'  * {p}')
-    print('------------------')
+        logging.info(f'  * {p}')
+    logging.info('------------------')
 
 
 def get_cmd_args():
@@ -53,7 +53,7 @@ def main():
         print_response(res)
         time.sleep(1)
 
-    print('')
+    logging.info('')
     logging.info('Authorized:')
     for i in range(3):
         logging.info(f'Run {i}')

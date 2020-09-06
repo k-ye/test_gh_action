@@ -6,17 +6,18 @@ on:
 jobs:
   check_auth:
     runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - uses: actions/setup-python@v2
-          with:
-            python-version: 3.8
-        - name: Auth vs un-auth rate limit
-          env:
-            # https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
-            OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          runs: |
-            python check_rate_limit.py "${OAUTH_TOKEN}"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Auth vs un-auth rate limit
+        env:
+          # https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
+          OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python check_rate_limit.py --pr ${{ github.event.pull_request.number }} --token "${OAUTH_TOKEN}"
+
   prepare_commit_data:
     runs-on: ubuntu-latest
     steps:
