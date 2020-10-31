@@ -4,7 +4,16 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  cancel_prev_runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ github.token }}
+
   prepare_commit_data:
+    needs: cancel_prev_runs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -81,28 +90,28 @@ jobs:
         run: |
           python run_long.py
 
-  check_prev_run:
-    needs: prepare_commit_data
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Pull Commit Data
-        uses: actions/download-artifact@v2
-        with:
-          name: echo_commit_data
-      - name: Echo Commit Data to Step Output
-        id: output_commit_data
-        run: |
-          bash echo_commit_data.sh
-      # - name: Dump Github Event
-      #   run: |
-      #     cat ${{ github.event_path }}
-      - name: Check Previous Run
-        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[skip ci]') }}
-        run: |
-          PR=${{ github.event.pull_request.number }}
-          SHA=${{ github.event.pull_request.head.sha }}
-          python check_prev_run.py --pr ${PR} --sha ${SHA}
+  # check_prev_run:
+  #   needs: prepare_commit_data
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.8
+  #     - name: Pull Commit Data
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: echo_commit_data
+  #     - name: Echo Commit Data to Step Output
+  #       id: output_commit_data
+  #       run: |
+  #         bash echo_commit_data.sh
+  #     # - name: Dump Github Event
+  #     #   run: |
+  #     #     cat ${{ github.event_path }}
+  #     - name: Check Previous Run
+  #       if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[skip ci]') }}
+  #       run: |
+  #         PR=${{ github.event.pull_request.number }}
+  #         SHA=${{ github.event.pull_request.head.sha }}
+  #         python check_prev_run.py --pr ${PR} --sha ${SHA}
