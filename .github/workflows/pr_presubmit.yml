@@ -75,8 +75,9 @@ jobs:
             python: 3.7
           - os: macos-latest
             python: 3.8
-          - os: macos-11.0
-            python: 3.7
+          # seems slow
+          # - os: macos-11.0
+          #    python: 3.7
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
