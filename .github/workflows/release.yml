@@ -1,0 +1,30 @@
+name: PR Presubmit
+on:
+  release:
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#release
+    types: [created]
+
+jobs:
+  run_long:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: 3.8
+          - os: ubuntu-16.04
+            python: 3.7
+          - os: macos-latest
+            python: 3.8
+          # seems slow
+          # - os: macos-11.0
+          #    python: 3.7
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Run Long
+        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[long]') }}
+        run: |
+          python run_long.py release

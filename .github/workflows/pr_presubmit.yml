@@ -3,9 +3,6 @@ on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#example-using-multiple-events-with-activity-types-or-configuration
   pull_request:
     types: [opened, synchronize, reopened]
-  push:
-    branches:
-    - master
 
 jobs:
   prepare_commit_data:
