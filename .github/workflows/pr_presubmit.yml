@@ -1,7 +1,11 @@
 name: PR Presubmit
 on:
+  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#example-using-multiple-events-with-activity-types-or-configuration
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+    branches:
+    - master
 
 jobs:
   prepare_commit_data:
@@ -62,12 +66,24 @@ jobs:
   
   run_long:
     needs: prepare_commit_data
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: 3.8
+          - os: ubuntu-16.04
+            python: 3.7
+          - os: macos-latest
+            python: 3.8
+          # seems slow
+          # - os: macos-11.0
+          #    python: 3.7
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python }}
       - name: Pull Commit Data
         uses: actions/download-artifact@v2
         with:
