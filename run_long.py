@@ -2,6 +2,9 @@ import time
 import logging
 import sys
 
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+                    level=logging.DEBUG,
+                    datefmt='%Y-%m-%d %H:%M:%S')
 argv = sys.argv
 if len(argv) > 1:
   logging.info(argv)
