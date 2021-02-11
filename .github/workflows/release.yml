@@ -35,16 +35,6 @@ jobs:
           export CXX=clang++
           python misc/ci_setup.py ci
 
-      - name: Test
-        run: |
-          export TAICHI_REPO_DIR=`pwd`
-          export PATH=$TAICHI_REPO_DIR/bin:$PATH
-          export PATH=$TAICHI_REPO_DIR/taichi-llvm/bin/:$PATH
-          export PYTHONPATH=$TAICHI_REPO_DIR/python
-          python examples/laplace.py
-          ti diagnose
-          ti test -vr2 -t2
-
       # TODO(#1580): Upload to PyPI. Need to set up PYPI_PWD in the secrets first.
       - name: Upload PyPI
         env:
