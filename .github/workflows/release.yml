@@ -1,8 +1,7 @@
 name: Publishing Release
 on:
-  release:
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#release
-    types: [published]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build_and_test_cpu:
@@ -10,12 +9,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-latest
-            python: 3.6
-            with_cc: OFF
-          - os: macos-latest
-            python: 3.7
-            with_cc: OFF
           - os: macos-latest
             python: 3.8
             with_cc: OFF
@@ -63,4 +56,4 @@ jobs:
           export PATH=$TAICHI_REPO_DIR/taichi-llvm/bin/:$PATH
           export PYTHONPATH=$TAICHI_REPO_DIR/python
           cd python
-          python build.py try_upload && bash <(curl -s https://codecov.io/bash)
+          python build.py try_upload
