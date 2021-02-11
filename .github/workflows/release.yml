@@ -2,6 +2,8 @@ name: Publishing Release
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  release:
+    types: [published]
 
 jobs:
   build_and_test_cpu:
@@ -53,7 +55,7 @@ jobs:
       - name: Archive Wheel Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: taichi-${{ matrix.python }}-${{ matrix.os }}.whl
+          name: taichi-${{ env.GITHUB_REF }}-${{ matrix.python }}-${{ matrix.os }}.whl
           path: python/dist/*.whl
 
       # TODO(#1580): Upload to PyPI. Need to set up PYPI_PWD in the secrets first.
