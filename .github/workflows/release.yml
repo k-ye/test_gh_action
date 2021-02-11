@@ -41,21 +41,29 @@ jobs:
           export CXX=clang++
           python misc/ci_setup.py ci
 
-      # TODO(#1580): Upload to PyPI. Need to set up PYPI_PWD in the secrets first.
-      - name: Upload PyPI
-        env:
-          # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#using-encrypted-secrets-in-a-workflow
-          PYPI_PWD: ${{ secrets.PYPI_PWD }}
+      - name: Build Python Wheel
         run: |
           export TAICHI_REPO_DIR=`pwd`
           export PATH=$TAICHI_REPO_DIR/bin:$PATH
           export PATH=$TAICHI_REPO_DIR/taichi-llvm/bin/:$PATH
           export PYTHONPATH=$TAICHI_REPO_DIR/python
           cd python
-          python build.py try_upload
+          python build.py build
 
       - name: Archive Wheel Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: taichi-${{ matrix.python }}-${{ matrix.os }}.whl
           path: python/dist/*.whl
+
+      # TODO(#1580): Upload to PyPI. Need to set up PYPI_PWD in the secrets first.
+      - name: Fake PyPI Upload
+        env:
+          PYPI_PWD: "fakefakefake"
+        run: |
+          export TAICHI_REPO_DIR=`pwd`
+          export PATH=$TAICHI_REPO_DIR/bin:$PATH
+          export PATH=$TAICHI_REPO_DIR/taichi-llvm/bin/:$PATH
+          export PYTHONPATH=$TAICHI_REPO_DIR/python
+          cd python
+          python build.py try_upload --skip_build

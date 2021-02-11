@@ -154,7 +154,7 @@ def main():
     if mode == 'build':
         return
     elif mode == 'upload':
-        os.system(
+        print(
             '{} -m twine upload dist/* --verbose -u yuanming-hu -p {}'.format(
                 get_python_executable(),
                 '%PYPI_PWD%' if get_os_name() == 'win' else '$PYPI_PWD'))
