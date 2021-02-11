@@ -10,6 +10,12 @@ jobs:
       matrix:
         include:
           - os: macos-latest
+            python: 3.6
+            with_cc: OFF
+          - os: macos-latest
+            python: 3.7
+            with_cc: OFF
+          - os: macos-latest
             python: 3.8
             with_cc: OFF
     runs-on: ${{ matrix.os }}
@@ -47,3 +53,9 @@ jobs:
           export PYTHONPATH=$TAICHI_REPO_DIR/python
           cd python
           python build.py try_upload
+
+      - name: Archive Wheel Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: taichi-${{ matrix.python }}-${{ matrix.os }}.whl
+          path: python/dist/*.whl
