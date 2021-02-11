@@ -52,6 +52,14 @@ jobs:
       #     cd python
       #     python build.py build
 
+      - name: Print env
+        env:
+          FOO: "42"
+        run: |
+          echo ${{ env.FOO }}
+          echo ${{ env }}
+          echo ${GITHUB_REF}
+
       - name: Archive Wheel Artifacts
         uses: actions/upload-artifact@v2
         with:
