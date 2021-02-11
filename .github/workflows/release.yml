@@ -63,7 +63,7 @@ jobs:
       - name: Archive Wheel Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: taichi-${GITHUB_REF}-${{ matrix.python }}-${{ matrix.os }}.whl
+          name: taichi-${{ github.ref }}-py${{ matrix.python }}-${{ matrix.os }}.whl
           path: python/build.py
           # name: taichi-${{ env.GITHUB_REF }}-${{ matrix.python }}-${{ matrix.os }}.whl
           # path: python/dist/*.whl
