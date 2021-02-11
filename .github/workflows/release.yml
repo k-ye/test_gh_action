@@ -55,7 +55,9 @@ jobs:
       - name: Archive Wheel Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: taichi-${{ env.GITHUB_REF }}-${{ matrix.python }}-${{ matrix.os }}.whl
+          # While ${{ github.ref }} does provide the release tag, it is of
+          # format `refs/tags/<tag_name>`, which isn't a valid file path.
+          name: taichi-py${{ matrix.python }}-${{ matrix.os }}.whl
           path: python/dist/*.whl
 
       # TODO(#1580): Upload to PyPI. Need to set up PYPI_PWD in the secrets first.
