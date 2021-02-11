@@ -54,7 +54,7 @@ jobs:
 
       - name: Print env
         env:
-          FOO: "42"
+          FOO: ${GITHUB_REF}
         run: |
           echo ${{ env.FOO }}
           echo ${{ env }}
