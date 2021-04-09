@@ -136,6 +136,26 @@ jobs:
           ti diagnose
           ti test -vr2 -t2
 
+  build_and_test_gpu_windows:
+    name: Build and Test (Windows GPU)
+    runs-on: [win10-nsj]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          cd
+          where msbuild
+        shell: cmd
+        env:
+          CI_SETUP_CMAKE_ARGS: -DTI_WITH_CUDA:BOOL=ON -DTI_WITH_OPENGL:BOOL=OFF -DTI_WITH_CC:BOOL=OFF
+      # - name: Test
+      #   run: |
+      #     set TAICHI_REPO_DIR=C:\taichi
+          
+      #     ti diagnose
+      #     ti test -vr2 -t2
+      #   shell: cmd
+
   check_previous_run:
     name: Checks the Workflow Run of the Previous Commit
     runs-on: ubuntu-latest
