@@ -7,8 +7,8 @@ jobs:
 
   build_and_test_gpu_windows:
     name: Build and Test (Windows GPU)
-    # runs-on: [self-hosted]
-    runs-on: [windows-latest]
+    runs-on: [self-hosted]
+    # runs-on: [windows-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Build
