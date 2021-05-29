@@ -81,6 +81,8 @@ def get_cmd_args():
     return parser.parse_args()
 
 
+
+
 def main():
     logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                         level=logging.DEBUG,

@@ -2,7 +2,7 @@ name: PR Presubmit
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#example-using-multiple-events-with-activity-types-or-configuration
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize]
 
 jobs:
   prepare_commit_data:
@@ -15,107 +15,19 @@ jobs:
       - name: Prepare Commit Data
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter
         run: |
-          PR=${{ github.event.pull_request.number }}
-          SHA=${{ github.event.pull_request.head.sha }}
-          python prepare_commit_data.py --pr ${PR} --sha ${SHA} --out echo_commit_data.sh
-          cat echo_commit_data.sh
+          echo "PR: ${{ github.event.pull_request.number }}"
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          BASE_SHA=${{ github.event.pull_request.base.sha }}
+          echo "HEAD REF: ${{ github.event.pull_request.head.ref }}"
+          echo "HEAD SHA: $HEAD_SHA"
+          echo "BASE REF: ${{ github.event.pull_request.base.ref }}"
+          echo "BASE SHA: $BASE_SHA"
+          git rev-parse HEAD
+          git diff $HEAD_SHA..$BASE_SHA
+
       - name: Push Commit Data
         # https://docs.github.com/en/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts#passing-data-between-jobs-in-a-workflow
         uses: actions/upload-artifact@v2
         with:
           name: echo_commit_data
           path: echo_commit_data.sh
-
-  run_fail:
-    needs: prepare_commit_data
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull Commit Data
-        uses: actions/download-artifact@v2
-        with:
-          name: echo_commit_data
-      - name: Echo Commit Data to Step Output
-        id: output_commit_data
-        run: |
-          bash echo_commit_data.sh
-      - name: Fail Intentionally  # Oops
-        # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
-        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[fail]') }}
-        run: |
-          false
-
-  run_ok:
-    needs: prepare_commit_data
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull Commit Data
-        uses: actions/download-artifact@v2
-        with:
-          name: echo_commit_data
-      - name: Echo Commit Data to Step Output
-        id: output_commit_data
-        run: |
-          bash echo_commit_data.sh
-      - name: Run OK
-        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[ok]') }}
-        run: |
-          echo 'ok'
-  
-  run_long:
-    needs: prepare_commit_data
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            python: 3.8
-          - os: ubuntu-16.04
-            python: 3.7
-          - os: macos-latest
-            python: 3.8
-          # seems slow
-          # - os: macos-11.0
-          #    python: 3.7
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Pull Commit Data
-        uses: actions/download-artifact@v2
-        with:
-          name: echo_commit_data
-      - name: Echo Commit Data to Step Output
-        id: output_commit_data
-        run: |
-          bash echo_commit_data.sh
-      - name: Run Long
-        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[long]') }}
-        run: |
-          python run_long.py
-
-  check_prev_run:
-    needs: prepare_commit_data
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Pull Commit Data
-        uses: actions/download-artifact@v2
-        with:
-          name: echo_commit_data
-      - name: Echo Commit Data to Step Output
-        id: output_commit_data
-        run: |
-          bash echo_commit_data.sh
-      # - name: Dump Github Event
-      #   run: |
-      #     cat ${{ github.event_path }}
-      - name: Check Previous Run
-        if: ${{ contains(steps.output_commit_data.outputs.head_commit_msg, '[skip ci]') }}
-        run: |
-          PR=${{ github.event.pull_request.number }}
-          SHA=${{ github.event.pull_request.head.sha }}
-          python check_prev_run.py --pr ${PR} --sha ${SHA}
