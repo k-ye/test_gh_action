@@ -23,6 +23,7 @@ jobs:
           echo "BASE REF: ${{ github.event.pull_request.base.ref }}"
           echo "BASE SHA: $BASE_SHA"
           git rev-parse HEAD
+          git log -5
           git diff $HEAD_SHA..$BASE_SHA
 
       - name: Push Commit Data
