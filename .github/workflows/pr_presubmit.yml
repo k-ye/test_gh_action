@@ -26,8 +26,7 @@ jobs:
           echo "BASE REF: ${{ github.event.pull_request.base.ref }}"
           echo "BASE SHA: $BASE_SHA"
           git rev-parse HEAD
-          git log -5
-          git diff $HEAD_SHA..$BASE_SHA
+          git diff $HEAD_SHA..$BASE_SHA --name-only
 
       - name: Push Commit Data
         # https://docs.github.com/en/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts#passing-data-between-jobs-in-a-workflow
